@@ -1,5 +1,7 @@
 # AWS CDK Playground
 
+[![CI](https://github.com/radlinskii/aws-cdk-playground/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/radlinskii/aws-cdk-playground/actions/workflows/CI.yml)
+
 This is a project for practical testing different [Cloudformation](https://aws.amazon.com/cloudformation/) stacks using [AWS CDK](https://docs.aws.amazon.com/cdk/) with [TypeScript](https://www.typescriptlang.org/).
 
 ## Getting Started
@@ -19,4 +21,3 @@ This is a project for practical testing different [Cloudformation](https://aws.a
 -   `npm run cdk -- diff` compare deployed stack with current state
 -   `npm run cdk -- deploy` deploy this stack to your default AWS account/region
 -   `npm run cdk -- destroy` delete current stack
-
