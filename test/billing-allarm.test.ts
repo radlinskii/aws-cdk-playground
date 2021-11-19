@@ -8,7 +8,7 @@ test('BillingAlarmStack', () => {
     // WHEN
     const monthlyThresholdInDollars = 12;
     const email = 'test@test.test';
-    const stack = new BillingAlarmStack(app, 'TestBillingStack', {
+    const stack = new BillingAlarmStack(app, 'TestBillingAlarmStack', {
         monthlyThresholdInDollars,
         email,
     });
