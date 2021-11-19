@@ -120,9 +120,7 @@
             "ignorePackages",
             {
                 "js": "never",
-                "jsx": "never",
-                "ts": "never",
-                "tsx": "never"
+                "ts": "never"
             }
         ],
         // note you must disable the base rule as it can report incorrect errors
