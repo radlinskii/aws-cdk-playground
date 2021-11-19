@@ -33,7 +33,6 @@
         }
     },
     "rules": {
-        "@typescript-eslint/ban-ts-comment": "off",
         "no-underscore-dangle": [2, { "allow": ["__"] }],
         "quotes": ["warn", "single", { "avoidEscape": true }],
         "import/exports-last": ["error"],
