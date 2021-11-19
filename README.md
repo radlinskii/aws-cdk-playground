@@ -4,13 +4,13 @@ This is a project for practical testing different [Cloudformation](https://aws.a
 
 ## Getting Started
 
-## Prerequisites
+### Prerequisites
 
 1. [Node.js & npm](https://nodejs.org/en)
 2. Registered account on [AWS](https://aws.amazon.com/)
 3. To use it you'll need to be logged in to [AWS CLI](https://aws.amazon.com/cli/)
 
-## Useful commands
+### Useful commands
 
 -   `npm run build` compile typescript to js
 -   `npm run watch` watch for changes and compile
