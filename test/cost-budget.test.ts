@@ -1,46 +1,52 @@
 /* eslint-disable jest/expect-expect */
-import { expect as expectCDK, haveResourceLike } from '@aws-cdk/assert';
-import * as cdk from '@aws-cdk/core';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { App } from 'aws-cdk-lib';
 import { CostBudgetStack } from '../lib/cost-budget';
 
-test('CostBudgetStack', () => {
-    const app = new cdk.App();
-    // WHEN
+describe('CostBudgetStack', () => {
+    const app = new App();
     const monthlyThresholdInDollars = 12;
     const email = 'test@test.test';
     const stack = new CostBudgetStack(app, 'TestCostBudgetStack', {
         monthlyThresholdInDollars,
         email,
     });
+    const template = Template.fromStack(stack);
 
-    // THEN
-    expectCDK(stack).to(
-        haveResourceLike('AWS::Budgets::Budget', {
-            Budget: {
-                BudgetLimit: {
-                    Amount: monthlyThresholdInDollars,
-                    Unit: 'USD',
-                },
-                BudgetName: 'CostBudget',
-                BudgetType: 'COST',
-                TimeUnit: 'MONTHLY',
-            },
-            NotificationsWithSubscribers: [
-                {
-                    Notification: {
-                        ComparisonOperator: 'GREATER_THAN',
-                        NotificationType: 'FORECASTED',
-                        Threshold: monthlyThresholdInDollars,
-                        ThresholdType: 'ABSOLUTE_VALUE',
+    test('creates a Budget', () => {
+        template.resourceCountIs('AWS::Budgets::Budget', 1);
+    });
+
+    test('creates a Budget with strictly matching propeties', () => {
+        template.hasResourceProperties(
+            'AWS::Budgets::Budget',
+            Match.objectEquals({
+                Budget: {
+                    BudgetLimit: {
+                        Amount: monthlyThresholdInDollars,
+                        Unit: 'USD',
                     },
-                    Subscribers: [
-                        {
-                            Address: email,
-                            SubscriptionType: 'EMAIL',
-                        },
-                    ],
+                    BudgetName: 'CostBudget',
+                    BudgetType: 'COST',
+                    TimeUnit: 'MONTHLY',
                 },
-            ],
-        })
-    );
+                NotificationsWithSubscribers: [
+                    {
+                        Notification: {
+                            ComparisonOperator: 'GREATER_THAN',
+                            NotificationType: 'FORECASTED',
+                            Threshold: monthlyThresholdInDollars,
+                            ThresholdType: 'ABSOLUTE_VALUE',
+                        },
+                        Subscribers: [
+                            {
+                                Address: email,
+                                SubscriptionType: 'EMAIL',
+                            },
+                        ],
+                    },
+                ],
+            })
+        );
+    });
 });
