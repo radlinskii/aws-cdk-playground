@@ -1,47 +1,49 @@
-import * as cdk from '@aws-cdk/core';
-import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
-import * as cloudwatchActions from '@aws-cdk/aws-cloudwatch-actions';
-import * as sns from '@aws-cdk/aws-sns';
-import * as snsSubscriptions from '@aws-cdk/aws-sns-subscriptions';
+import type { StackProps } from 'aws-cdk-lib';
+import { Duration, Stack } from 'aws-cdk-lib';
+import { Alarm, ComparisonOperator, Metric } from 'aws-cdk-lib/aws-cloudwatch';
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
+import type { Construct } from 'constructs';
 
-export interface BillingAlarmProps extends cdk.StackProps {
+export interface BillingAlarmProps extends StackProps {
     email: string;
     monthlyThresholdInDollars: number;
 }
 
-export class BillingAlarmStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: BillingAlarmProps) {
+export class BillingAlarmStack extends Stack {
+    constructor(scope: Construct, id: string, props: BillingAlarmProps) {
         super(scope, id, props);
 
-        const billingAlarmTopic = new sns.Topic(this, 'BillingAlarmNotificationTopic', {
+        const billingAlarmTopic = new Topic(this, 'BillingAlarmNotificationTopic', {
             topicName: 'BillingAlarmNotificationTopic',
         });
 
         billingAlarmTopic.addSubscription(
-            new snsSubscriptions.EmailSubscription(props.email, {
+            new EmailSubscription(props.email, {
                 json: true,
             })
         );
 
-        const estimatedChargesMetric = new cloudwatch.Metric({
+        const estimatedChargesMetric = new Metric({
             namespace: 'AWS/Billing',
             metricName: 'EstimatedCharges',
             statistic: 'Maximum',
             dimensionsMap: {
                 Currency: 'USD',
             },
-            period: cdk.Duration.hours(9), // https://forums.aws.amazon.com/thread.jspa?threadID=135955
+            period: Duration.hours(9), // https://forums.aws.amazon.com/thread.jspa?threadID=135955
         });
 
-        const billingAlarm = new cloudwatch.Alarm(this, 'BillingAlarm', {
+        const billingAlarm = new Alarm(this, 'BillingAlarm', {
             metric: estimatedChargesMetric,
             evaluationPeriods: 1, // 1 month
             threshold: props.monthlyThresholdInDollars,
-            comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+            comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
             alarmDescription: 'Alarm for monthly estimated charges exceeding certain amount of money',
         });
 
-        const alarmAction = new cloudwatchActions.SnsAction(billingAlarmTopic);
+        const alarmAction = new SnsAction(billingAlarmTopic);
 
         billingAlarm.addAlarmAction(alarmAction);
     }
