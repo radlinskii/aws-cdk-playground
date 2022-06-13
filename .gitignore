@@ -12,3 +12,7 @@ cdk.out
 
 .idea
 .vscode
+
+*.pem
+
+cdk.context.json
