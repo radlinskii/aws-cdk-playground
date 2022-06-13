@@ -22,7 +22,7 @@ describe('BillingAlarmStack', () => {
             Endpoint: email,
         });
     });
-    test('creates CloudWatch Alarm with strictly matching propeties', () => {
+    test('creates CloudWatch Alarm with strictly matching properties', () => {
         template.hasResourceProperties(
             'AWS::CloudWatch::Alarm',
             Match.objectEquals({
