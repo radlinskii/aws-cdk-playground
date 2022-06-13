@@ -17,7 +17,7 @@ describe('CostBudgetStack', () => {
         template.resourceCountIs('AWS::Budgets::Budget', 1);
     });
 
-    test('creates a Budget with strictly matching propeties', () => {
+    test('creates a Budget with strictly matching properties', () => {
         template.hasResourceProperties(
             'AWS::Budgets::Budget',
             Match.objectEquals({
